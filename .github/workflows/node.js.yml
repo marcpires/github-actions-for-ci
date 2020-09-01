@@ -11,18 +11,17 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
-    #- run: npm ci
-    - run: |
-        npm install
-        npm run build --if-present
-    - name: Persist to workspace
-      uses: actions/upload-artifact@v2
-      with:
-        name: workspace
-        path: public/
+      - uses: actions/checkout@v2
+      - run: |
+          npm install
+          npm run build --if-present
+      - name: Persist to workspace
+        uses: actions/upload-artifact@master
+        with:
+          name: workspace
+          path: public/
 
   test:
     needs: build
@@ -33,9 +32,10 @@ jobs:
         node-version: [12.x, 14.x]
     steps:
     - name: Attatch to workspace
-      uses: actions/checkout@v2
+      uses: actions/download-artifact@master
       with:
         name: workspace
+        path: public/
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
